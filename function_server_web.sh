@@ -32,7 +32,7 @@ fi
 
 
             INSTANCE_ID=$(aws ec2 run-instances \
-                --image-id ami-0c7217cdde317cfec \
+                --image-id ami-0b6d9d3d33ba97d99 \
                 --instance-type t2.micro \
                 --associate-public-ip-address \
                 --security-group-ids "$SG_ID" \
