@@ -4,7 +4,7 @@ set -e
 function_delete_resources(){
             echo "--- INIZIO CANCELLAZIONE COMPLETA DELLE RISORSE ---"
 
-            # 1. Recupero ed eliminiamo le istanze EC2 associate al Security Group "sg-webserver" 
+            # 1. Recupero ed eliminiamo le istanze EC2 associate al Security Group "ilmiglioresecuritygroup" 
 
             echo "1. Ricerca ed eliminazione istanze EC2..."
             INSTANCE_IDS=$(aws ec2 describe-instances \
@@ -55,10 +55,10 @@ function_delete_resources(){
                 echo "Nessuno Snapshot EBS trovato."
             fi
 
-            # 4. Elimino il Security Group chiamato "sg-webserver"
-            echo "4. Eliminazione Security Group 'sg-webserver'..."
+            # 4. Elimino il Security Group chiamato "ilmiglioresecuritygroup"
+            echo "4. Eliminazione Security Group 'ilmiglioresecuritygroup'..."
             SG_ID=$(aws ec2 describe-security-groups \
-                --group-names "sg-webserver" \
+                --group-names "ilmiglioresecuritygroup" \
                 --query 'SecurityGroups[0].GroupId' \
                 --output text 2>/dev/null || true)
 
@@ -66,7 +66,7 @@ function_delete_resources(){
                 aws ec2 delete-security-group --group-id "$SG_ID" 2>/dev/null || true
                 echo "Security Group ($SG_ID) eliminato."
             else
-                echo "Security Group 'sg-webserver' non trovato."
+                echo "Security Group 'ilmiglioresecuritygroup' non trovato."
             fi
 
             echo "----------------------------------------------------"

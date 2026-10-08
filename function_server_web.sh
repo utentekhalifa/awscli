@@ -8,22 +8,39 @@ function_server_web() {
             # con subnet e relative security groups e routing tables
             # 2>/dev/null nasconde l'errore se esiste già, || true evita che lo script si blocchi perchè ho utilizzato il set -e    
 
-           SG_ID=$(aws ec2 create-security-group \
-                --group-name "sg-webserver" \
-                --description "SECURITY GROUP per SSH e HTTP" \
-                --query 'GroupId' \
-                --output text 2>/dev/null || true)
-
-            # Se il securitygroup esisteva già a un riutilizzo di questa funzione darebbe errore ma continuerebbe lo script e avendo poi il $SG_ID vuoto o "None": 
-            #lo recuperiamo con il describe, inoltre dato che utilizzo la vpc di default le rotte predefinite puntano il traffico da 172.31.0.0/16 a locale e 0.0.0.0/0 a l'igw
-        if [ -z "$SG_ID" ] || [ "$SG_ID" = "None" ]; then
+           #Cerca l'ID usando i filtri (non restituisce errore se non lo trova)
             SG_ID=$(aws ec2 describe-security-groups \
-                --group-names "sg-webserver" \
-                --query 'SecurityGroups[0].GroupId' \
-                --output text)
-fi
+            --filters "Name=group-name,Values=ilmiglioresecuritygroup" \
+            --query 'SecurityGroups[0].GroupId' \
+            --output text 2>/dev/null || true)
 
-            echo "--- 2. LANCIO ISTANZA EC2 CON USER-DATA ---"
+            #Se SG_ID è vuoto oppure restituisce "None", crea il Security Group
+        if [ -z "$SG_ID" ] || [ "$SG_ID" = "None" ]; then
+             echo "Security Group non trovato. Creazione di 'ilmiglioresecuritygroup' in corso..."
+            SG_ID=$(aws ec2 create-security-group \
+            --group-name "ilmiglioresecuritygroup" \
+            --description "security group per SSH e HTTP" \
+            --query 'GroupId' \
+            --output text)
+
+            echo "Aggiunta possibilità di accesso a SSH (22) e HTTP (80)"
+        aws ec2 authorize-security-group-ingress \
+            --group-id "$SG_ID" \
+            --protocol tcp \
+            --port 22 \
+            --cidr 0.0.0.0/0 2>/dev/null || true
+
+        aws ec2 authorize-security-group-ingress \
+            --group-id "$SG_ID" \
+            --protocol tcp \
+            --port 80 \
+            --cidr 0.0.0.0/0 2>/dev/null || true
+
+        else
+            echo "Security Group 'ilmiglioresecuritygroup' già esistente con ID: $SG_ID"
+        fi
+
+            echo "--- 2. LANCIO DELL'ISTANZA EC2 CON USER-DATA ---"
 
             #faccio il run dell'istanza passando lo User Data aggiornato, recuperando da console l'immagine corretta della t2.micro disponibile per il free tier, di default
             #per una istanza del genere viene associato un volume basico gp2/gp3 con 8gb di memoria sufficienti per questo progetto ma anch'esso configurabile all'occorrenza,
@@ -80,7 +97,7 @@ fi
 
                     echo "----------------------------------------------------------------------------------"
                     echo "Inizializzazione completata."
-                ' \ 
+                ' \
                 --query 'Instances[0].InstanceId' \
                 --output text) 
             # qui termina la fase del run intance 
@@ -112,5 +129,6 @@ fi
                 --output text)
 
             echo "AMI di backup creata con successo: $AMI_ID"
-            ;;
+            
+
         }
