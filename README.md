@@ -25,4 +25,4 @@ Volutamente non ho inserito delle branch protection roules poichè quelle necess
 
 ps. chiaramente ho testato il punto 1 e 5 che ho completato e fatto dei fix con semplice commento altrimenti il progetto non avrebbe avuto senso, tramite "meaningful commits" cioè standard semplici per l'aggiunta di aggiornamenti ai git add seguiti dai commit -m.
 
-[![AWS Certified Solutions Architect – Associate](aws-certified-solutions-architect-associate.png)]([IL_TUO_LINK_CREDLY](https://www.credly.com/badges/84adf2b3-7281-4c3e-922a-4feeab1fac13/public_url))
+[![AWS Certified Solutions Architect – Associate](aws-certified-solutions-architect-associate.png)](https://www.credly.com/badges/84adf2b3-7281-4c3e-922a-4feeab1fac13/public_url)
