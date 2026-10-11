@@ -21,7 +21,8 @@ set -e
     # Carico le funzioni in memoria, inserirle in questo script completamente avrebbe reso il codice lungo e illegibile
     source ./function_server_web.sh
     source ./function_delete_resources.sh
- 
+    source ./function_sito_CDN.sh
+
  read -p "Vuoi proseguire con lo script? (s/n): " ATTESA
 
 if [ "$ATTESA" = "s" ]; then
@@ -44,7 +45,7 @@ if [ "$ATTESA" = "s" ]; then
 	echo " "
 	echo " "
 	echo "   1) Creazione del solo server web e creazione dell'AMI di backup    "
- 	echo "   2) creazione di un sito statico, CDN, DNS e utilizzo HTTPS invece di HTTP"
+ 	echo "   2) creazione di un sito statico, CDN e utilizzo HTTPS invece di HTTP"
 	echo "   3) upload forzato con chache invalidation per aggiornamento feature sito urgente "
 	echo "   4) upload di file su s3 "
 	echo "   5) cancellazione delle risorse							"
@@ -63,7 +64,7 @@ if [ "$ATTESA" = "s" ]; then
             1) 
                 function_server_web
                 ;;
-            2) 
+            2)  function_sito_CDN
                 ;;
             3) 
                 ;;
